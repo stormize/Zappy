@@ -1,4 +1,4 @@
-from django.shortcuts import render
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -38,8 +38,7 @@ class Events(APIView):
         if 'event' in message:
             event_message = message.get('event')
             
-            if event_message.get('subtype') == 'bot_message':
-             return Response(status=status.HTTP_200_OK)
+            
             new_user = event_message.get('user')
             text     = event_message.get('text')
             channel  = event_message.get('channel')
@@ -51,12 +50,15 @@ class Events(APIView):
                 event_id=message.get('event_id')
                 text = text.replace('go','')
                 print(text)
+                print(bot_text)
                 Client.api_call(
                     method="chat.postMessage",
                     channel = channel,
-                    text = bot_text
+                    text = bot_text,
                 )
                 # save to the data base
+                if Tweet.objects.filter(tweet=text):
+                    return Response(status=status.HTTP_200_OK)
                 new_tweet=Tweet(user=new_user,tweet=text)
                 new_tweet.save()
                 api.update_status(text)
