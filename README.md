@@ -2,11 +2,12 @@
 to use zappy u need 
 - twitter developer account
 -slack api events app
+<img src = "https://scontent-hbe1-1.xx.fbcdn.net/v/t1.15752-9/56328562_2093003417450703_4919011067557838848_n.png?_nc_cat=111&_nc_ht=scontent-hbe1-1.xx&oh=33860d962d28e39663821178a8d1ddc5&oe=5D0A7E9D">
 - use your keys and tokens in settings 
 - ngrock installed open its cmd and run ngrock http 8000
 -run django server -> python manage.py runserver 0.0.0.0:8000
 -run angular server ng serve 
-install packages in requirements.txt and u rdy to go
+-install packages in requirements.txt and u rdy to go
 
 to trigger bot u need to use keyword go like follow then the tweet 
 <img src ="https://scontent-hbe1-1.xx.fbcdn.net/v/t1.15752-9/56451993_608971842911902_4669916192889110528_n.png?_nc_cat=101&_nc_ht=scontent-hbe1-1.xx&oh=cad6466692a8e86905b444ac83122fc3&oe=5D128FD8">
