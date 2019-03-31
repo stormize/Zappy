@@ -3,6 +3,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Tweet
 from django.urls import include, path, reverse
+from .serializers import TweeTSerializer
 
 # Create your tests here.
 class APITEST(TestCase):
@@ -10,6 +11,7 @@ class APITEST(TestCase):
      self.client = APIClient()
     def test_events_get(self):
          tweets = Tweet.objects.all()
-         url = reverse('events:events')
+         url = reverse('events')
          response = self.client.get(url)
-         self.assertContains(response, tweets)
+         serializer = TweeTSerializer(tweets,many=True)
+         self.assertContains(response, serializer.data)
