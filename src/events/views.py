@@ -8,25 +8,24 @@ from .models import Tweet
 from django.views import generic
 from .serializers import TweeTSerializer
 import tweepy
-# Create your views here.
-#setting tweeter credintials
-CONSUMER_KEY = getattr(settings, 'CONSUMER_KEY', None)
-CONSUMER_SECRET =getattr(settings, 'CONSUMER_SECRET', None)
-ACCESS_KEY =getattr(settings, 'ACCESS_KEY', None)
-ACCESS_SECRET =getattr(settings, 'ACCESS_SECRET', None)
-auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
-api = tweepy.API(auth)
-#setting slack credintials
-SLACK_VERIFICATION_TOKEN = getattr(settings, 'SLACK_VERIFICATION_TOKEN', None)
-SLACK_BOT_USER_TOKEN = getattr(settings,'SLACK_BOT_USER_TOKEN', None) 
-Client = SlackClient(SLACK_BOT_USER_TOKEN)   
+ 
 class Events(APIView):
-    
+    def __init__(self):
+      #setting tweeter credintials
+        self.CONSUMER_KEY = getattr(settings, 'CONSUMER_KEY', None)
+        self.CONSUMER_SECRET =getattr(settings, 'CONSUMER_SECRET', None)
+        self.ACCESS_KEY =getattr(settings, 'ACCESS_KEY', None)
+        self.ACCESS_SECRET =getattr(settings, 'ACCESS_SECRET', None)
+        self.auth = tweepy.OAuthHandler(self.CONSUMER_KEY, self.CONSUMER_SECRET)
+        self.auth.set_access_token(self.ACCESS_KEY, self.ACCESS_SECRET)
+        self.api = tweepy.API(self.auth)
+        #setting slack credintials
+        self.SLACK_VERIFICATION_TOKEN = getattr(settings, 'SLACK_VERIFICATION_TOKEN', None)
+        self.SLACK_BOT_USER_TOKEN = getattr(settings,'SLACK_BOT_USER_TOKEN', None) 
+        self.Client = SlackClient(self.SLACK_BOT_USER_TOKEN)  
     def post(self,req,*args,**kwargs):
-        event_id=" "
         message=req.data 
-        if message.get('token') != SLACK_VERIFICATION_TOKEN:
+        if message.get('token') != self.SLACK_VERIFICATION_TOKEN:
            return Response(status=status.HTTP_403_FORBIDDEN)
         # verification challenge
         if message.get('url') == 'url_verification':
@@ -37,31 +36,24 @@ class Events(APIView):
         # catching ok messages
         if 'event' in message:
             event_message = message.get('event')
-            
-            
             new_user = event_message.get('user')
             text     = event_message.get('text')
             channel  = event_message.get('channel')
             bot_text = "post saved ".format()
             if "go" in text.lower():
-                if event_id == message.get('event_id'):
-                    print('event id'+event_id)
-                    return Response(status=status.HTTP_200_OK)
+                
                 event_id=message.get('event_id')
                 text = text.replace('go','')
                 print(text)
                 print(bot_text)
-                Client.api_call(
-                    method="chat.postMessage",
-                    channel = channel,
-                    text = bot_text,
-                )
-                # save to the data base
+                if self.Client.api_call(method="chat.postMessage",channel = channel,text = bot_text,):
+                    print(Tweet.objects.filter(tweet=text).values('created'))
+                # check if status alrdy exists and save to the data base
                 if Tweet.objects.filter(tweet=text):
-                    return Response(status=status.HTTP_200_OK)
+                    return Response(status=status.HTTP_403_FORBIDDEN)
                 new_tweet=Tweet(user=new_user,tweet=text)
                 new_tweet.save()
-                api.update_status(text)
+                self.api.update_status(text)
 
                 return Response(status=status.HTTP_200_OK)
              
