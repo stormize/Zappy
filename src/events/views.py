@@ -11,7 +11,7 @@ import tweepy
  
 class Events(APIView):
     def __init__(self):
-      #setting tweeter credintials
+       #setting tweeter credintials
         self.CONSUMER_KEY = getattr(settings, 'CONSUMER_KEY', None)
         self.CONSUMER_SECRET =getattr(settings, 'CONSUMER_SECRET', None)
         self.ACCESS_KEY =getattr(settings, 'ACCESS_KEY', None)
@@ -44,10 +44,7 @@ class Events(APIView):
                 
                 event_id=message.get('event_id')
                 text = text.replace('go','')
-                print(text)
-                print(bot_text)
-                if self.Client.api_call(method="chat.postMessage",channel = channel,text = bot_text,):
-                    print(Tweet.objects.filter(tweet=text).values('created'))
+                self.Client.api_call(method="chat.postMessage",channel = channel,text = bot_text)
                 # check if status alrdy exists and save to the data base
                 if Tweet.objects.filter(tweet=text):
                     return Response(status=status.HTTP_403_FORBIDDEN)
