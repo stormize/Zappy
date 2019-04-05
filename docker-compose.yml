@@ -1,11 +1,22 @@
 version: "3"
 
 services:     
-  dj:
-    container_name: dj
-    build: .
-    command: python src/manage.py runserver 0.0.0.0:80
+  back-end:
+    container_name: back-end
+    build: back-end
+    command: python manage.py runserver 0.0.0.0:80
     volumes:
-      - .:/code
+      - ./back-end:/code
     ports:
       - "80:80"
+    depends_on:
+    - mongo
+  ng:
+    container_name: front-end
+    build: front-end
+    ports:
+      - "4200:4200"
+  mongo:
+    image: mongo
+    ports:
+    - "27017:27017"
