@@ -40,10 +40,11 @@ class Events(APIView):
             text     = event_message.get('text')
             channel  = event_message.get('channel')
             bot_text = "post saved ".format()
-            if "go" in text.lower():
+            if "@go" in text.lower():
                 
                 event_id=message.get('event_id')
-                text = text.replace('go','')
+                text = text[text.index('@go')+4:]
+                #.replace('go','')
                 self.Client.api_call(method="chat.postMessage",channel = channel,text = bot_text)
                 # check if status alrdy exists and save to the data base
                 if Tweet.objects.filter(tweet=text):
